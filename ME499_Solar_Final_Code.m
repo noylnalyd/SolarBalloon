@@ -65,8 +65,3 @@ plot(x,y);
 xlabel('Altitude (km)','FontSize', 22);
 ylabel('Irradiance (W/(m^2)','FontSize', 22);
 
-
-
-
-
-
