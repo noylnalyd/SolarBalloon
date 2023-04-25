@@ -45,7 +45,7 @@ y = Data001(:,2);
 plot(x,y);
 
 
-
+dadf
 
 
 
