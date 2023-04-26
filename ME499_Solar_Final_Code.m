@@ -1,36 +1,54 @@
-%% Final Report
+%% Solar Panel Mass Calcs
 clear all;
 clc;
 format long g;
 
-r = [10; 15; 20];
 
-load('Data001.mat','Data001');
-f = @(b,x) b(1).*exp(b(2).*x)+b(3);                                     % Objective Function
-B = fminsearch(@(b) norm(Data001(:,2) - f(b,Data001(:,1))), [-100; -5; 1600])
-fB = @(x) B(1).*exp(B(2).*x)+B(3);
+% Scaling
+load('Data001.mat')
 
-% Atmospheric conditions
-alt = [5; 10; 15; 20; 25; 30];
-P_atm = [5.405e4; 2.65e4; 1.211e4; 5.529e3; 2.549e3; 1.197e3];
-rho_atm = [7.364e-1; 4.135e-1; 1.948e-1; 8.891e-2; 4.008e-2; 1.841e-2];
-T_atm = [-17.47; -49.9; -56.5; -56.5; -51.6; -46.64];
-I_atm = fB(alt);
+Phoenix_Ground = 364; %W/m^2
+Phoenix_Sunny_Ground = 406; %W/m^2
+Altitude_Data = Data001(1:end,1);
+Ground = Data001(1,2);
+Radiation = Data001(1:end,2);
+Radiation_Scaling = Radiation/Ground;
+Phoenix_Scaled = Phoenix_Sunny_Ground*Radiation_Scaling;
 
+figure(2)
+plot(Altitude_Data,Phoenix_Scaled)
 
-etaPanel = 0.15;
-I_DNIDHI_sun = 887;
-
-I_rel_atm = I_atm./1000;
-
-figure(2);
-plot(alt,I_rel_atm*I_DNIDHI_sun);
-hold on;
+yyaxis left
 xlabel('Altitude (km)','FontSize', 22);
-ylabel('Insolation (W/m^2)','FontSize', 22);
+ylabel('Irradiance (W/(m^2)','FontSize', 22);
+xlim([5,20])
 
+yyaxis right
+plot(Altitude_Data,Phoenix_Scaled*365*24/10^6)
+
+xlabel('Altitude (km)','FontSize', 22);
+ylabel('Yearly Irradiance (MWh/(m^2)','FontSize', 22);
+xlim([5,20])
+ylim([4.03,4.73])
+
+figure(3)
+plot(Altitude_Data,Phoenix_Scaled/Phoenix_Ground*100 - 100)
+
+xlabel('Altitude (km)','FontSize', 22);
+ylabel('Increase Over Ground (%)','FontSize', 22);
+xlim([5,20])
+
+
+color = ["r--","r-","b--","b-","m--","m-"]
+counter = 1;
+r = [10; 15; 20];
 for i=1:length(r)
 
+    % Atmospheric conditions
+    alt = [5; 10; 15; 20; 25; 30];
+    P_atm = [5.405e4; 2.65e4; 1.211e4; 5.529e3; 2.549e3; 1.197e3];
+    rho_atm = [7.364e-1; 4.135e-1; 1.948e-1; 8.891e-2; 4.008e-2; 1.841e-2];
+    T_atm = [-17.47; -49.9; -56.5; -56.5; -51.6; -46.64];
     M = 2.016;
     R = 0.0821;
         
@@ -61,36 +79,84 @@ for i=1:length(r)
     A_panel = m_panel./11.66
         
     % Graph
-    figure(1);
-    plot(alt,A_panel)
+    %plot(alt,A_panel)
+    %hold on;
+    %xlabel('Altitude (km)','FontSize', 22);
+    %ylabel('Solar Panel Area (m^2)','FontSize', 22);
+    %xline(0);
+    %yline(0);
+
+    % Solar panel output
+    eta = 0.2;
+    irradiance_array = [466; 505; 527; 538; 540; 540];%Below this loop I have a plot of average daily irradiance vs altitude for Phoenix. This value should input the altitude and output the irradiance based on the plot. 
+    Solar_Output = A_panel.*irradiance_array.*eta; %Watts of total solar power from the panels
+    
+    %Conversion to hydrogen and back
+    Electrolyzer_eta = 0.75;
+    Fuel_cell_eta = 0.5;
+    Round_Trip_Eta = 0.375; %0.75*0.5
+    
+    Actual_Output = ((Solar_Output*10) + (Solar_Output*0.375*14))/24;
+    plot(alt,Solar_Output./1000,color(counter))
     hold on;
+    counter = counter+1;
+    plot(alt,Actual_Output./1000,color(counter))
+    hold on;
+    counter = counter+1;
     xlabel('Altitude (km)','FontSize', 22);
-    ylabel('Solar Panel Area (m^2)','FontSize', 22);
+    ylabel('Electrical Output (kW)','FontSize', 22);
     xline(0);
     yline(0);
-    xlim([0,26]);
-    ylim([0,1800]);
-    qw{1} = plot(nan, 'Color', "[0 0.4470 0.7410]");
-    qw{2} = plot(nan, 'Color', "[0.8500 0.3250 0.0980]");
-    qw{3} = plot(nan, 'Color', "[0.9290 0.6940 0.1250]");
-    legend([qw{:}], {'20 m diameter','30 m diameter','40 m diameter'}, 'location', 'best')
-
-    figure(3);
-    plot(alt,A_panel.*I_rel_atm*I_DNIDHI_sun*etaPanel);
-    hold on;
-    xlabel('Altitude (km)','FontSize', 22);
-    ylabel('Solar Panel Power (W)','FontSize', 22);
-    legend([qw{:}], {'20 m diameter','30 m diameter','40 m diameter'}, 'location', 'best')
 
 end
 xlim([0,26]);
-ylim([0,1800]);
+ylim([0,180]);
 
-qw{1} = plot(nan, 'Color', "[0 0.4470 0.7410]");
-qw{2} = plot(nan, 'Color', "[0.8500 0.3250 0.0980]");
-qw{3} = plot(nan, 'Color', "[0.9290 0.6940 0.1250]");
-legend([qw{:}], {'20 m diameter','30 m diameter','40 m diameter'}, 'location', 'best')
+qw{1} = plot(nan, 'r--');
+qw{2} = plot(nan, 'r-');
+qw{3} = plot(nan, 'b--');
+qw{4} = plot(nan, 'b-');
+qw{5} = plot(nan, 'm--');
+qw{6} = plot(nan, 'm-');
+legend([qw{:}], {'20 m diameter - Solar Panel','20 m diameter - Grid','30 m diameter - Solar Panel','30 m diameter - Grid','40 m diameter - Solar Panel','40 m diameter - Grid'}, 'location', 'best')
 hold on;
+
+%% Solar scaling calcs
+
+load('Data001.mat')
+
+Phoenix_Ground = 364; %W/m^2
+Phoenix_Sunny_Ground = 406; %W/m^2
+Altitude_Data = Data001(1:end,1);
+Ground = Data001(1,2);
+Radiation = Data001(1:end,2);
+Radiation_Scaling = Radiation/Ground;
+Phoenix_Scaled = Phoenix_Sunny_Ground*Radiation_Scaling;
+
+figure(2)
+plot(Altitude_Data,Phoenix_Scaled)
+
+yyaxis left
+xlabel('Altitude (km)','FontSize', 22);
+ylabel('Irradiance (W/(m^2)','FontSize', 22);
+xlim([5,20])
+
+yyaxis right
+plot(Altitude_Data,Phoenix_Scaled*365*24/10^6)
+
+xlabel('Altitude (km)','FontSize', 22);
+ylabel('Yearly Irradiance (MWh/(m^2)','FontSize', 22);
+xlim([5,20])
+ylim([4.03,4.73])
+
+figure(3)
+plot(Altitude_Data,Phoenix_Scaled/Phoenix_Ground*100 - 100)
+
+xlabel('Altitude (km)','FontSize', 22);
+ylabel('Increase Over Ground (%)','FontSize', 22);
+xlim([5,20])
+
+
 
 %% NASA study
 clear all;
