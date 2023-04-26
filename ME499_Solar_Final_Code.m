@@ -16,13 +16,15 @@ P_atm = [5.405e4; 2.65e4; 1.211e4; 5.529e3; 2.549e3; 1.197e3];
 rho_atm = [7.364e-1; 4.135e-1; 1.948e-1; 8.891e-2; 4.008e-2; 1.841e-2];
 T_atm = [-17.47; -49.9; -56.5; -56.5; -51.6; -46.64];
 I_atm = fB(alt);
-I_rel_atm = I_atm./I_atm(1);
+
 
 etaPanel = 0.15;
-I_DNIDHI_sun = 364;
+I_DNIDHI_sun = 887;
+
+I_rel_atm = I_atm./1000;
 
 figure(2);
-plot(alt,I_rel_atm*I_DNIDHI_sun*etaPanel);
+plot(alt,I_rel_atm*I_DNIDHI_sun);
 hold on;
 xlabel('Altitude (km)','FontSize', 22);
 ylabel('Insolation (W/m^2)','FontSize', 22);
@@ -66,12 +68,19 @@ for i=1:length(r)
     ylabel('Solar Panel Area (m^2)','FontSize', 22);
     xline(0);
     yline(0);
+    xlim([0,26]);
+    ylim([0,1800]);
+    qw{1} = plot(nan, 'Color', "[0 0.4470 0.7410]");
+    qw{2} = plot(nan, 'Color', "[0.8500 0.3250 0.0980]");
+    qw{3} = plot(nan, 'Color', "[0.9290 0.6940 0.1250]");
+    legend([qw{:}], {'20 m diameter','30 m diameter','40 m diameter'}, 'location', 'best')
 
     figure(3);
     plot(alt,A_panel.*I_rel_atm*I_DNIDHI_sun*etaPanel);
     hold on;
     xlabel('Altitude (km)','FontSize', 22);
     ylabel('Solar Panel Power (W)','FontSize', 22);
+    legend([qw{:}], {'20 m diameter','30 m diameter','40 m diameter'}, 'location', 'best')
 
 end
 xlim([0,26]);
