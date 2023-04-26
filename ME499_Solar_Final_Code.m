@@ -2,15 +2,21 @@
 clear all;
 clc;
 format long g;
-
+load('Data001.mat','Data001');
 r = [10; 15; 20];
-for i=1:length(r)
 
-    % Atmospheric conditions
-    alt = [5; 10; 15; 20; 25; 30];
-    P_atm = [5.405e4; 2.65e4; 1.211e4; 5.529e3; 2.549e3; 1.197e3];
-    rho_atm = [7.364e-1; 4.135e-1; 1.948e-1; 8.891e-2; 4.008e-2; 1.841e-2];
-    T_atm = [-17.47; -49.9; -56.5; -56.5; -51.6; -46.64];
+% Atmospheric conditions
+alt = [5; 10; 15; 20; 25; 30];
+P_atm = [5.405e4; 2.65e4; 1.211e4; 5.529e3; 2.549e3; 1.197e3];
+rho_atm = [7.364e-1; 4.135e-1; 1.948e-1; 8.891e-2; 4.008e-2; 1.841e-2];
+T_atm = [-17.47; -49.9; -56.5; -56.5; -51.6; -46.64];
+
+altRange = 1:3;
+I_atm = interp1(Data001(altRange,1),Data001(altRange,2),alt);
+I_rel_atm = I_atm./I_atm(1);
+
+for i=1:length(r)
+    
     M = 2.016;
     R = 0.0821;
         
@@ -39,6 +45,8 @@ for i=1:length(r)
     SF = 1.2;
     m_panel = m_payload./1.2
     A_panel = m_panel./11.66
+
+
         
     % Graph
     plot(alt,A_panel)
