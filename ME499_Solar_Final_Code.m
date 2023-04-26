@@ -18,9 +18,16 @@ T_atm = [-17.47; -49.9; -56.5; -56.5; -51.6; -46.64];
 I_atm = fB(alt);
 I_rel_atm = I_atm./I_atm(1);
 
-for i=1:length(r)
+etaPanel = 0.15;
+I_DNIDHI_sun = 364;
 
-    
+figure(2);
+plot(alt,I_rel_atm*I_DNIDHI_sun*etaPanel);
+hold on;
+xlabel('Altitude (km)','FontSize', 22);
+ylabel('Insolation (W/m^2)','FontSize', 22);
+
+for i=1:length(r)
 
     M = 2.016;
     R = 0.0821;
@@ -52,12 +59,20 @@ for i=1:length(r)
     A_panel = m_panel./11.66
         
     % Graph
+    figure(1);
     plot(alt,A_panel)
     hold on;
     xlabel('Altitude (km)','FontSize', 22);
     ylabel('Solar Panel Area (m^2)','FontSize', 22);
     xline(0);
     yline(0);
+
+    figure(3);
+    plot(alt,A_panel.*I_rel_atm*I_DNIDHI_sun*etaPanel);
+    hold on;
+    xlabel('Altitude (km)','FontSize', 22);
+    ylabel('Solar Panel Power (W)','FontSize', 22);
+
 end
 xlim([0,26]);
 ylim([0,1800]);
