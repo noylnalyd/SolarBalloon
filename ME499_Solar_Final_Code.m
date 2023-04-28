@@ -16,27 +16,30 @@ Radiation_Scaling = Radiation/Ground;
 Phoenix_Scaled = Phoenix_Sunny_Ground*Radiation_Scaling;
 
 figure(2)
-plot(Altitude_Data,Phoenix_Scaled)
-
+plot(Altitude_Data,Phoenix_Scaled,'LineWidth',2)
 yyaxis left
 xlabel('Altitude (km)','FontSize', 22);
 ylabel('Irradiance (W/(m^2)','FontSize', 22);
 xlim([5,20])
+ax = gca;
+ax.FontSize = 22;
 
 yyaxis right
-plot(Altitude_Data,Phoenix_Scaled*365*24/10^6)
-
+plot(Altitude_Data,Phoenix_Scaled*365*24/10^6,'LineWidth',2)
 xlabel('Altitude (km)','FontSize', 22);
 ylabel('Yearly Irradiance (MWh/(m^2)','FontSize', 22);
 xlim([5,20])
 ylim([4.03,4.73])
+ax = gca;
+ax.FontSize = 22;
 
 figure(3)
-plot(Altitude_Data,Phoenix_Scaled/Phoenix_Ground*100 - 100)
-
+plot(Altitude_Data,Phoenix_Scaled/Phoenix_Ground*100 - 100,"b-",'LineWidth',2)
 xlabel('Altitude (km)','FontSize', 22);
 ylabel('Increase Over Ground (%)','FontSize', 22);
 xlim([5,20])
+ax = gca;
+ax.FontSize = 22;
 
 
 color = ["r--","r-","b--","b-","m--","m-"]
@@ -75,8 +78,8 @@ for i=1:length(r)
     % Solar panel mass
     m_payload = m_lift - m_cable - m_balloon;
     SF = 1.2;
-    m_panel = m_payload./1.2
-    A_panel = m_panel./11.66
+    m_panel = m_payload./1.2;
+    A_panel = m_panel./11.66;
         
     % Graph
     %plot(alt,A_panel)
@@ -97,10 +100,10 @@ for i=1:length(r)
     Round_Trip_Eta = 0.375; %0.75*0.5
     
     Actual_Output = ((Solar_Output*10) + (Solar_Output*0.375*14))/24;
-    plot(alt,Solar_Output./1000,color(counter))
+    plot(alt,Solar_Output./1000,color(counter),'LineWidth',2)
     hold on;
     counter = counter+1;
-    plot(alt,Actual_Output./1000,color(counter))
+    plot(alt,Actual_Output./1000,color(counter),'LineWidth',2)
     hold on;
     counter = counter+1;
     xlabel('Altitude (km)','FontSize', 22);
@@ -120,6 +123,8 @@ qw{5} = plot(nan, 'm--');
 qw{6} = plot(nan, 'm-');
 legend([qw{:}], {'20 m diameter - Solar Panel','20 m diameter - Grid','30 m diameter - Solar Panel','30 m diameter - Grid','40 m diameter - Solar Panel','40 m diameter - Grid'}, 'location', 'best')
 hold on;
+ax = gca;
+ax.FontSize = 22;
 
 %% Solar scaling calcs
 
@@ -134,28 +139,30 @@ Radiation_Scaling = Radiation/Ground;
 Phoenix_Scaled = Phoenix_Sunny_Ground*Radiation_Scaling;
 
 figure(2)
-plot(Altitude_Data,Phoenix_Scaled)
-
+plot(Altitude_Data,Phoenix_Scaled, 'LineWidth',2)
 yyaxis left
 xlabel('Altitude (km)','FontSize', 22);
 ylabel('Irradiance (W/(m^2)','FontSize', 22);
 xlim([5,20])
+ax = gca;
+ax.FontSize = 22;
 
 yyaxis right
-plot(Altitude_Data,Phoenix_Scaled*365*24/10^6)
-
+plot(Altitude_Data,Phoenix_Scaled*365*24/10^6, 'LineWidth',2)
 xlabel('Altitude (km)','FontSize', 22);
 ylabel('Yearly Irradiance (MWh/(m^2)','FontSize', 22);
 xlim([5,20])
 ylim([4.03,4.73])
+ax = gca;
+ax.FontSize = 22;
 
 figure(3)
-plot(Altitude_Data,Phoenix_Scaled/Phoenix_Ground*100 - 100)
-
+plot(Altitude_Data,Phoenix_Scaled/Phoenix_Ground*100 - 100, 'LineWidth',2)
 xlabel('Altitude (km)','FontSize', 22);
 ylabel('Increase Over Ground (%)','FontSize', 22);
 xlim([5,20])
-
+ax = gca;
+ax.FontSize = 22;
 
 
 %% NASA study
@@ -177,15 +184,16 @@ rho_H2 = (P_atm/101300)*M/(R*(T_atm + 273))
 m = rho_atm*(121762.4403) - (rho_H2)*(121762.4403)
 
 
-%%
+%% ASHRAE model
 load('Data001.mat','Data001');
 x = Data001(:,1);
 y = Data001(:,2);
-plot(x,y);
+plot(x,y,"b-",'LineWidth',2);
 
 xlabel('Altitude (km)','FontSize', 22);
 ylabel('Irradiance (W/(m^2)','FontSize', 22);
-
+ax = gca;
+ax.FontSize = 22;
 
 
 
